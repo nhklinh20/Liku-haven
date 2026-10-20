@@ -486,7 +486,7 @@ button.wide{width:100%;padding:10px}
 .room-p{display:none}
 @media (orientation:portrait) and (max-width:820px){
   .room-l{position:absolute!important;left:-9999px;top:0;width:10px!important;height:10px!important;min-width:0!important;opacity:0;pointer-events:none;visibility:hidden}
-  .room-p{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);border-radius:18px;box-shadow:0 20px 50px rgba(120,70,60,.25)}
+  .room-p{display:block;width:calc(100% + 2 * max(16px,env(safe-area-inset-left,0px)));max-width:none;height:auto;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));border-radius:0;box-shadow:0 20px 50px rgba(120,70,60,.25)}
   .scene{overflow:visible;margin-inline:0;justify-content:center}
   .swipe,.rot{display:none!important}
 }
@@ -727,10 +727,10 @@ button.wide{width:100%;padding:10px}
     <use href="#o-lamp" transform="translate(-355 10)" class="obj" tabindex="0" data-open="lamp" aria-label="lamp"/>
     <use href="#d-art" transform="translate(-30 -10)"/>
     <use href="#o-shelf" transform="translate(-225 250)" class="obj" tabindex="0" data-open="shelf" aria-label="shelf"/>
-    <use href="#d-rug" transform="translate(-20 380)"/>
+    <use href="#d-rug" transform="translate(-85 380)"/>
     <use href="#d-desk" transform="translate(-276 300) scale(.9)"/><use href="#d-pc" transform="translate(-276 300) scale(.9)"/><use href="#o-fish" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="fish" aria-label="fish"/>
     <use href="#o-laptop" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="laptop" aria-label="laptop"/><use href="#o-notes" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="notes" aria-label="notes"/><use href="#o-jar" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="jar" aria-label="jar"/><use href="#d-clock" transform="translate(-276 300) scale(.9)"/><use href="#o-music" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="music" aria-label="music"/><use href="#o-garden" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="garden" aria-label="garden"/><use href="#d-vase" transform="translate(-276 300) scale(.9)"/>
-    <use href="#d-chair" transform="translate(-40 380)"/>
+    <use href="#d-chair" transform="translate(-105 380)"/>
   </svg>
   </div>
 </div>
