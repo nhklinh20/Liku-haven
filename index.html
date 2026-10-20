@@ -512,7 +512,7 @@ button.wide{width:100%;padding:10px}
     <defs>
       <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3dfd6"/><stop offset=".6" stop-color="#e9cfc4"/><stop offset="1" stop-color="#dcbcb0"/></linearGradient>
       <radialGradient id="wallLight" cx=".6" cy=".15" r=".7"><stop offset="0" stop-color="#fff1e0" stop-opacity=".9"/><stop offset="1" stop-color="#fff1e0" stop-opacity="0"/></radialGradient>
-      <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9bfa9"/><stop offset="1" stop-color="#c6a68e"/></linearGradient>
+      <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1ebe8"/><stop offset="1" stop-color="#e2d8d4"/></linearGradient><radialGradient id="floorShine" cx=".5" cy="0" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
       <linearGradient id="curtain" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stop-color="#e3a7a2"/><stop offset=".15" stop-color="#f0bfb8"/><stop offset=".3" stop-color="#dc9f9a"/><stop offset=".45" stop-color="#efbdb6"/><stop offset=".6" stop-color="#d99b96"/><stop offset=".75" stop-color="#eebab3"/><stop offset="1" stop-color="#d8988f"/></linearGradient>
       <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e9ec"/><stop offset="1" stop-color="#fbd9c7"/></linearGradient>
@@ -534,7 +534,7 @@ button.wide{width:100%;padding:10px}
     <!-- floor -->
     <rect y="470" width="1000" height="150" fill="url(#floor)"/>
     <rect y="468" width="1000" height="6" fill="#f2e6df"/>
-    <g opacity=".12" stroke="#7a5a48"><line x1="0" y1="510" x2="1000" y2="510"/><line x1="0" y1="560" x2="1000" y2="560"/><line x1="0" y1="605" x2="1000" y2="605"/></g>
+    <rect y="470" width="1000" height="150" fill="url(#floorShine)"/><g stroke="#fff" stroke-opacity=".7" stroke-width="1.2"><line x1="0" y1="545" x2="1000" y2="545"/><line x1="200" y1="470" x2="150" y2="620"/><line x1="500" y1="470" x2="500" y2="620"/><line x1="800" y1="470" x2="850" y2="620"/></g>
 
     <!-- window -->
     <g id="o-window" class="obj" tabindex="0" data-open="window" aria-label="Cửa sổ">
@@ -720,7 +720,7 @@ button.wide{width:100%;padding:10px}
     <rect width="600" height="680" fill="url(#wall)"/><rect width="600" height="680" fill="url(#wallLight)"/>
     <rect width="600" height="26" fill="#f6e7df"/><rect class="glow" x="0" y="22" width="600" height="16" fill="#ffd9a0" filter="url(#blur8)" opacity=".9"/><rect class="glow" x="0" y="25" width="600" height="3" fill="#fff3d9"/>
     <rect y="680" width="600" height="320" fill="url(#floor)"/><rect y="678" width="600" height="6" fill="#f2e6df"/>
-    <g opacity=".12" stroke="#7a5a48"><line x1="0" y1="760" x2="600" y2="760"/><line x1="0" y1="850" x2="600" y2="850"/><line x1="0" y1="950" x2="600" y2="950"/></g>
+    <rect y="680" width="600" height="320" fill="url(#floorShine)"/><g stroke="#fff" stroke-opacity=".7" stroke-width="1.2"><line x1="0" y1="830" x2="600" y2="830"/><line x1="150" y1="680" x2="100" y2="1000"/><line x1="450" y1="680" x2="500" y2="1000"/></g>
     <use href="#o-window" transform="translate(0 30)" class="obj" tabindex="0" data-open="window" aria-label="window"/>
     <use href="#o-calendar" transform="translate(10 0)" class="obj" tabindex="0" data-open="calendar" aria-label="calendar"/>
     <use href="#o-moments" transform="translate(-402 0)" class="obj" tabindex="0" data-open="moments" aria-label="moments"/>
