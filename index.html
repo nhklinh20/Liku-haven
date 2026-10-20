@@ -485,7 +485,7 @@ button.wide{width:100%;padding:10px}
 /* phone portrait: dedicated tall room */
 .room-p{display:none}
 @media (orientation:portrait) and (max-width:820px){
-  .room-l{display:none!important}
+  .room-l{position:absolute!important;left:-9999px;top:0;width:10px!important;height:10px!important;min-width:0!important;opacity:0;pointer-events:none;visibility:hidden}
   .room-p{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);border-radius:18px;box-shadow:0 20px 50px rgba(120,70,60,.25)}
   .scene{overflow:visible;margin-inline:0;justify-content:center}
   .swipe,.rot{display:none!important}
