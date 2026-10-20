@@ -467,6 +467,17 @@ button.wide{width:100%;padding:10px}
 .vis button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 @media (max-width:640px){.pf-row{grid-template-columns:1fr}.pf-l{width:auto}.pf-line{flex-direction:column;gap:2px}.vis{justify-self:start}}
 .langsel{font:inherit;font-size:13px;padding:7px 8px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--fg)}
+/* notifications: mine vs from others */
+:root{--social:#5a6fd8;--social-bg:#eef1ff}
+.toast .src,.nt .src{display:block;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--pink-d);margin-bottom:2px}
+.toast.social{border-left-color:var(--social);background:linear-gradient(90deg,var(--social-bg),#fff 60%)}
+.toast.social .src,.nt.social .src{color:var(--social)}
+.nt{border-left:5px solid var(--pink)}
+.nt .ic{background:var(--rose);color:var(--pink-d);font-weight:700}
+.nt.unread{border-color:var(--pink);border-left-color:var(--pink-d)}
+.nt.social{border-left-color:var(--social);background:#fff}
+.nt.social.unread{background:var(--social-bg);border-color:#c9d1ff;border-left-color:var(--social)}
+.nt.social .ic{background:var(--social);color:#fff;border-radius:50%}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -1245,12 +1256,14 @@ document.body.classList.add('d3');
 const TODAY=(()=>{const n=new Date();return n.getFullYear()===2026&&n.getMonth()===9?n.getDate():0})();
 try{const s=JSON.parse(localStorage.getItem('liku_reminders'));if(Array.isArray(s))reminders=s}catch(e){}
 function saveReminders(){try{localStorage.setItem('liku_reminders',JSON.stringify(reminders))}catch(e){}}
-const NTYPE={reminder:{n:'Nhắc nhở',i:'📅'},pomodoro:{n:'Pomodoro',i:'⏰'},moments:{n:'Khoảnh khắc',i:'💗'},system:{n:'Hệ thống',i:'✨'},reward:{n:'Phần thưởng',i:'🏆'}};
+const NTYPE={reminder:{n:'Nhắc nhở',i:'📅'},pomodoro:{n:'Pomodoro',i:'⏰'},moments:{n:'Khoảnh khắc',i:'💗'},system:{n:'Hệ thống',i:'✨'},reward:{n:'Phần thưởng',i:'🏆'},social:{n:'Từ mọi người',i:'💌'}};
+const isSocial=n=>n.type==='social'||!!n.from;let nFilter='all';
 let notifs=[],nprefs={reminder:true,pomodoro:true,moments:true,system:true,device:false};
 try{notifs=JSON.parse(localStorage.getItem('liku_notifs'))||[];nprefs=Object.assign(nprefs,JSON.parse(localStorage.getItem('liku_nprefs'))||{})}catch(e){}
 if(!notifs.length){const now=Date.now();notifs=[
-  {id:'s1',type:'moments',title:'Người ấy đã chia sẻ một khoảnh khắc với bạn',body:'"Hôm nay đi ăn bánh tráng trộn…" (thông báo mẫu)',at:now-2*36e5,read:false,open:'moments'},
+  {id:'s1',type:'social',from:'Người ấy',title:'Người ấy đã chia sẻ một khoảnh khắc với bạn',body:'"Hôm nay đi ăn bánh tráng trộn…" (thông báo mẫu)',at:now-2*36e5,read:false,open:'moments'},
   {id:'s2',type:'system',title:'Chào mừng tới Liku Haven',body:'Thông báo về nhắc nhở, Pomodoro và khoảnh khắc sẽ hiện ở đây.',at:now-5*36e5,read:true}]}
+notifs.forEach(n=>{if(n.id==='s1'&&n.type==='moments'){n.type='social';n.from='Người ấy'}});
 function saveN(){try{localStorage.setItem('liku_notifs',JSON.stringify(notifs.slice(0,100)));localStorage.setItem('liku_nprefs',JSON.stringify(nprefs))}catch(e){}}
 function updBadge(){const u=notifs.filter(n=>!n.read).length,b=$('#bellBadge');b.hidden=!u;b.textContent=u>9?'9+':u}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<1)return 'Vừa xong';if(m<60)return m+' phút trước';const h=Math.round(m/60);if(h<24)return h+' giờ trước';return Math.round(h/24)+' ngày trước'}
@@ -1264,20 +1277,23 @@ function notify(type,title,body,open){
 let curView=null;const title_is=k=>curView===k;
 function toast(n){
   let box=$('#toasts');if(!box){box=document.createElement('div');box.id='toasts';box.className='toasts';box.setAttribute('role','status');document.body.appendChild(box)}
-  const el=document.createElement('div');el.className='toast';el.innerHTML=`<b>${NTYPE[n.type].i} ${esc(n.title)}</b><span>${esc(n.body||'')}</span>`;
+  const el=document.createElement('div');el.className='toast'+(isSocial(n)?' social':'');el.innerHTML=`<em class="src">${isSocial(n)?'💌 '+esc(n.from||'Bạn bè'):'🌸 Liku Haven'}</em><b>${NTYPE[n.type].i} ${esc(n.title)}</b><span>${esc(n.body||'')}</span>`;
   el.onclick=()=>{el.remove();n.read=true;saveN();updBadge();open(n.open||'notifs')};
   box.appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),320)},6000);
 }
 views.notifs={t:'Thông báo',r:renderNotifs};
 function renderNotifs(){
   const dev='Notification' in window?Notification.permission:'unsupported';
-  body.innerHTML=`<div class="tools"><button id="nRead">Đánh dấu đã đọc</button><button id="nClear">Xoá hết</button></div>
-  <div class="rows">${notifs.length?notifs.map(n=>`<div class="nt ${n.read?'':'unread'}" data-nid="${n.id}" role="button" tabindex="0"><span class="ic" style="background:var(--rose)">${NTYPE[n.type].i}</span><span class="t"><b>${esc(n.title)}</b><span class="meta">${esc(n.body||'')}</span><br><span class="meta">${ago(n.at)}</span></span></div>`).join(''):'<p class="note-sample">Chưa có thông báo nào.</p>'}</div>
+  const cnt=f=>notifs.filter(n=>!n.read&&(f==='all'||(f==='social')===isSocial(n))).length;const shown=notifs.filter(n=>nFilter==='all'||(nFilter==='social')===isSocial(n));
+  body.innerHTML=`<div class="tabs">${[['all','Tất cả'],['mine','🌸 Của mình'],['social','💌 Từ mọi người']].map(([k,l])=>`<button data-nf="${k}" aria-pressed="${k===nFilter}">${l}${cnt(k)?` <span class="cnt">${cnt(k)}</span>`:''}</button>`).join('')}</div>
+  <div class="tools"><button id="nRead">Đánh dấu đã đọc</button><button id="nClear">Xoá hết</button></div>
+  <div class="rows">${shown.length?shown.map(n=>`<div class="nt ${isSocial(n)?'social':''} ${n.read?'':'unread'}" data-nid="${n.id}" role="button" tabindex="0"><span class="ic">${isSocial(n)?esc((n.from||'B').charAt(0).toUpperCase()):NTYPE[n.type].i}</span><span class="t"><em class="src">${isSocial(n)?'💌 '+esc(n.from||'Bạn bè'):'🌸 '+NTYPE[n.type].n}</em><b>${esc(n.title)}</b><span class="meta">${esc(n.body||'')}</span><br><span class="meta">${ago(n.at)}</span></span></div>`).join(''):'<p class="note-sample">Chưa có thông báo nào.</p>'}</div>
   <h3 style="font-family:var(--display);margin:20px 0 4px">Cài đặt thông báo</h3>
-  <div class="switches">${['reminder','pomodoro','moments','reward','system'].map(k=>`<label><input type="checkbox" data-np="${k}" ${nprefs[k]!==false?'checked':''}>${NTYPE[k].i} ${NTYPE[k].n}</label>`).join('')}
+  <div class="switches">${['social','reminder','pomodoro','moments','reward','system'].map(k=>`<label><input type="checkbox" data-np="${k}" ${nprefs[k]!==false?'checked':''}>${NTYPE[k].i} ${NTYPE[k].n}</label>`).join('')}
   <label><input type="checkbox" id="nDev" ${nprefs.device&&dev==='granted'?'checked':''}>📱 Hiện cả trên thanh thông báo của máy</label></div>
   <p class="note-sample" id="nDevMsg">${dev==='denied'||dev==='unsupported'?'Trang này chưa được phép hiện thông báo của máy. Khi cài app lên màn hình chính, mục này sẽ bật được.':'Thông báo hiện ngay trong app khi app đang mở. Thông báo lúc app đã tắt sẽ có khi nối Firebase.'}</p>
   <div class="tools"><button id="nTest">Gửi thử một thông báo</button></div>`;
+  body.querySelectorAll('[data-nf]').forEach(b=>b.onclick=()=>{nFilter=b.dataset.nf;renderNotifs()});
   $('#nRead').onclick=()=>{notifs.forEach(n=>n.read=true);saveN();updBadge();renderNotifs()};
   $('#nClear').onclick=()=>{notifs=[];saveN();updBadge();renderNotifs()};
   $('#nTest').onclick=()=>notify('system','Thông báo thử','Thông báo đang hoạt động bình thường.');
