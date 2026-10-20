@@ -482,6 +482,14 @@ button.wide{width:100%;padding:10px}
 .pf-paper .pf-g:first-child{margin-top:4px}
 .rot{margin-left:8px;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--rose);color:var(--pink-d);border-color:var(--pink)}
 @media (orientation:landscape) and (max-height:500px){header{gap:4px}h1{font-size:18px}header .modes button,.langsel{font-size:11px;padding:4px 8px}.hint{display:none}.scene svg.room{height:calc(100vh - 70px);min-width:0;width:auto}.scene{overflow:visible;margin-inline:0;justify-content:center}}
+/* phone portrait: dedicated tall room */
+.room-p{display:none}
+@media (orientation:portrait) and (max-width:820px){
+  .room-l{display:none!important}
+  .room-p{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);border-radius:18px;box-shadow:0 20px 50px rgba(120,70,60,.25)}
+  .scene{overflow:visible;margin-inline:0;justify-content:center}
+  .swipe,.rot{display:none!important}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -500,7 +508,7 @@ button.wide{width:100%;padding:10px}
     <span class="hint">Chạm vào đồ vật trong phòng để mở ngăn của nó<span class="swipe"> · vuốt ngang để xem cả phòng</span><button class="rot" id="rotBtn" hidden>↻ Xoay ngang</button></span>
   </header>
   <div class="scene">
-  <svg class="room" viewBox="0 0 1000 620" role="img" aria-label="Căn phòng học hiện đại tông hồng">
+  <svg class="room room-l" viewBox="0 0 1000 620" role="img" aria-label="Căn phòng học hiện đại tông hồng">
     <defs>
       <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3dfd6"/><stop offset=".6" stop-color="#e9cfc4"/><stop offset="1" stop-color="#dcbcb0"/></linearGradient>
       <radialGradient id="wallLight" cx=".6" cy=".15" r=".7"><stop offset="0" stop-color="#fff1e0" stop-opacity=".9"/><stop offset="1" stop-color="#fff1e0" stop-opacity="0"/></radialGradient>
@@ -529,7 +537,7 @@ button.wide{width:100%;padding:10px}
     <g opacity=".12" stroke="#7a5a48"><line x1="0" y1="510" x2="1000" y2="510"/><line x1="0" y1="560" x2="1000" y2="560"/><line x1="0" y1="605" x2="1000" y2="605"/></g>
 
     <!-- window -->
-    <g class="obj" tabindex="0" data-open="window" aria-label="Cửa sổ">
+    <g id="o-window" class="obj" tabindex="0" data-open="window" aria-label="Cửa sổ">
       <rect x="24" y="70" width="150" height="320" fill="url(#sky)"/>
       <rect x="24" y="70" width="150" height="320" fill="none" stroke="#fff" stroke-width="6"/>
       <line x1="99" y1="70" x2="99" y2="390" stroke="#fff" stroke-width="4"/>
@@ -541,7 +549,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- floating shelf (library) -->
-    <g class="obj" tabindex="0" data-open="shelf" aria-label="Kệ sách treo tường">
+    <g id="o-shelf" class="obj" tabindex="0" data-open="shelf" aria-label="Kệ sách treo tường">
       <rect class="glow" x="440" y="170" width="380" height="40" fill="#ffd9a0" filter="url(#blur20)" opacity=".9"/>
       <rect x="440" y="158" width="380" height="12" rx="2" fill="#fbf6f3"/>
       <rect x="440" y="168" width="380" height="3" fill="#fff0cf"/>
@@ -564,7 +572,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- photo frame: moments -->
-    <g class="obj" tabindex="0" data-open="moments" aria-label="Khung ảnh khoảnh khắc">
+    <g id="o-moments" class="obj" tabindex="0" data-open="moments" aria-label="Khung ảnh khoảnh khắc">
       <g transform="rotate(4 925 125)">
         <rect x="872" y="62" width="106" height="124" rx="3" fill="#fff" stroke="#ead6cf"/>
         <rect x="881" y="71" width="88" height="84" fill="#fde6ea"/>
@@ -577,7 +585,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- hexagon lights -->
-    <g class="obj hexlit" tabindex="0" data-open="lamp" aria-label="Đèn lục giác">
+    <g id="o-lamp" class="obj hexlit" tabindex="0" data-open="lamp" aria-label="Đèn lục giác">
       <g class="glow" filter="url(#blur8)" opacity=".9" fill="#ffd0d6"><circle cx="862" cy="245" r="40"/></g>
       <g stroke="#fff" stroke-width="1.5">
         <polygon points="850,215 862,208 874,215 874,229 862,236 850,229" fill="#ffe1e6"/>
@@ -590,7 +598,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- wall calendar -->
-    <g class="obj" tabindex="0" data-open="calendar" aria-label="Lịch treo tường">
+    <g id="o-calendar" class="obj" tabindex="0" data-open="calendar" aria-label="Lịch treo tường">
       <line x1="300" y1="62" x2="280" y2="82" stroke="#c9b3aa" stroke-width="1.5"/><line x1="300" y1="62" x2="320" y2="82" stroke="#c9b3aa" stroke-width="1.5"/><circle cx="300" cy="62" r="3" fill="#b89c90"/>
       <rect x="252" y="84" width="96" height="112" rx="4" fill="#fff" stroke="#ead6cf"/>
       <rect x="252" y="84" width="96" height="24" rx="4" fill="#e8a3a8"/>
@@ -601,15 +609,15 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- wall art -->
-    <rect x="300" y="220" width="70" height="95" fill="#f7efeb" stroke="#e4cfc6" stroke-width="3"/>
-    <path d="M315 300 q20 -60 40 -10" stroke="#e8a3a8" stroke-width="5" fill="none"/><circle cx="338" cy="255" r="10" fill="#f6d3d3"/>
+    <g id="d-art"><rect x="300" y="220" width="70" height="95" fill="#f7efeb" stroke="#e4cfc6" stroke-width="3"/>
+    <path d="M315 300 q20 -60 40 -10" stroke="#e8a3a8" stroke-width="5" fill="none"/><circle cx="338" cy="255" r="10" fill="#f6d3d3"/></g>
 
     <!-- rug -->
-    <ellipse cx="230" cy="575" rx="190" ry="42" fill="#efc7c4"/>
-    <ellipse cx="230" cy="573" rx="175" ry="36" fill="#f3cfcc"/>
+    <g id="d-rug"><ellipse cx="230" cy="575" rx="190" ry="42" fill="#efc7c4"/>
+    <ellipse cx="230" cy="573" rx="175" ry="36" fill="#f3cfcc"/></g>
 
     <!-- chair -->
-    <g>
+    <g id="d-chair">
       <ellipse cx="230" cy="582" rx="80" ry="12" fill="#8a6a5a" opacity=".2"/>
       <g stroke="#cfc6c2" stroke-width="5"><line x1="230" y1="540" x2="170" y2="575"/><line x1="230" y1="540" x2="290" y2="575"/><line x1="230" y1="540" x2="230" y2="585"/></g>
       <rect x="225" y="480" width="10" height="62" fill="#e6dedb"/>
@@ -621,6 +629,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- desk -->
+    <g id="d-desk">
     <rect class="glow" x="330" y="398" width="620" height="40" fill="#ffd9a0" filter="url(#blur20)" opacity=".85"/>
     <rect x="320" y="378" width="640" height="16" rx="3" fill="url(#deskTop)"/>
     <rect x="320" y="392" width="640" height="3" fill="#fff0cf"/>
@@ -633,8 +642,9 @@ button.wide{width:100%;padding:10px}
     <rect class="glow" x="806" y="463" width="138" height="20" fill="#ffd9a0" filter="url(#blur8)" opacity=".8"/>
     <rect class="glow" x="806" y="525" width="138" height="20" fill="#ffd9a0" filter="url(#blur8)" opacity=".8"/>
     <rect x="830" y="490" width="60" height="30" rx="3" fill="#f2d6cc"/><rect x="900" y="500" width="30" height="20" rx="3" fill="#fff"/>
+    </g>
     <!-- aquarium -->
-    <g class="obj" tabindex="0" data-open="fish" aria-label="Hồ cá">
+    <g id="o-fish" class="obj" tabindex="0" data-open="fish" aria-label="Hồ cá">
       <defs><linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6ee"/><stop offset="1" stop-color="#7cc2d3"/></linearGradient></defs>
       <rect x="815" y="532" width="120" height="48" rx="4" fill="url(#water)" stroke="#fff" stroke-width="2"/>
       <rect x="815" y="532" width="120" height="6" fill="#fff" opacity=".5"/>
@@ -646,7 +656,7 @@ button.wide{width:100%;padding:10px}
       <text class="label" x="875" y="520" text-anchor="middle">Hồ cá thói quen</text>
     </g>
     <!-- PC case under desk -->
-    <g>
+    <g id="d-pc">
       <rect x="520" y="440" width="90" height="140" rx="4" fill="#fbf7f5"/>
       <rect x="528" y="448" width="74" height="124" rx="2" fill="#f8d9e4" opacity=".6"/>
       <circle class="glow" cx="565" cy="490" r="22" fill="#ff9fc4" filter="url(#blur8)" opacity=".85"/>
@@ -656,7 +666,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- monitor -->
-    <g class="obj" tabindex="0" data-open="laptop" aria-label="Màn hình máy tính">
+    <g id="o-laptop" class="obj" tabindex="0" data-open="laptop" aria-label="Màn hình máy tính">
       <rect class="glow" x="460" y="240" width="250" height="140" fill="#f6a9b8" filter="url(#blur20)" opacity=".55"/>
       <rect x="468" y="218" width="230" height="136" rx="8" fill="#fbf8f6"/>
       <rect x="476" y="226" width="214" height="114" rx="4" fill="url(#screen)"/>
@@ -669,7 +679,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- notebook + pen -->
-    <g class="obj" tabindex="0" data-open="notes" aria-label="Sổ và bút">
+    <g id="o-notes" class="obj" tabindex="0" data-open="notes" aria-label="Sổ và bút">
       <g transform="rotate(-8 400 372)">
         <rect x="360" y="360" width="90" height="16" rx="2" fill="#fffaf5" stroke="#efd8d0"/>
         <rect x="360" y="360" width="6" height="16" fill="#e8a3a8"/>
@@ -679,7 +689,7 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- money jar -->
-    <g class="obj" tabindex="0" data-open="jar" aria-label="Hũ chi tiêu">
+    <g id="o-jar" class="obj" tabindex="0" data-open="jar" aria-label="Hũ chi tiêu">
       <ellipse cx="740" cy="379" rx="24" ry="5" fill="#8a6a5a" opacity=".18"/>
       <path d="M720 330 h40 v4 q8 6 8 18 v20 q0 8 -8 8 h-40 q-8 0 -8 -8 v-20 q0 -12 8 -18z" fill="#fff" opacity=".35" stroke="#fff" stroke-width="1.5"/>
       <path id="coins" d="M714 362 q26 -6 52 0 v10 q0 8 -8 8 h-36 q-8 0 -8 -8z" fill="#f2c26b"/>
@@ -691,11 +701,11 @@ button.wide{width:100%;padding:10px}
     </g>
 
     <!-- desk clock -->
-    <rect x="770" y="350" width="36" height="28" rx="5" fill="#fff" stroke="#eadfdb"/>
-    <text x="788" y="369" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#c97a83" id="deskClock">21:47</text>
+    <g id="d-clock"><rect x="770" y="350" width="36" height="28" rx="5" fill="#fff" stroke="#eadfdb"/>
+    <text x="788" y="369" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#c97a83" id="deskClock">21:47</text></g>
 
     <!-- headphones on stand -->
-    <g class="obj" tabindex="0" data-open="music" aria-label="Tai nghe">
+    <g id="o-music" class="obj" tabindex="0" data-open="music" aria-label="Tai nghe">
       <rect x="868" y="300" width="4" height="76" fill="#e9e3e0"/><ellipse cx="870" cy="377" rx="18" ry="4" fill="#e9e3e0"/>
       <path d="M846 330 Q870 282 894 330" stroke="#f4c6c6" stroke-width="8" fill="none"/>
       <rect x="836" y="322" width="18" height="30" rx="8" fill="#f1b9bb"/><rect x="886" y="322" width="18" height="30" rx="8" fill="#f1b9bb"/>
@@ -703,8 +713,24 @@ button.wide{width:100%;padding:10px}
       <text class="label" x="870" y="275" text-anchor="middle">Nhạc · ghi âm</text>
     </g>
     <!-- desk plant + vase -->
-    <g class="obj" tabindex="0" data-open="garden" aria-label="Chậu cây"><path d="M925 378 l4 -24 h22 l4 24z" fill="#f7f3f0"/><g fill="#7fae8d"><ellipse cx="932" cy="340" rx="6" ry="14" transform="rotate(-20 932 340)"/><ellipse cx="948" cy="336" rx="6" ry="15" transform="rotate(20 948 336)"/><ellipse cx="940" cy="330" rx="5" ry="15"/></g><text class="label" x="935" y="300" text-anchor="end">Vườn cây</text></g>
-    <g><rect x="340" y="350" width="14" height="28" rx="5" fill="#fff" opacity=".7"/><circle cx="345" cy="342" r="7" fill="#f0a6ad"/><circle cx="352" cy="338" r="6" fill="#f6c3c6"/></g>
+    <g id="o-garden" class="obj" tabindex="0" data-open="garden" aria-label="Chậu cây"><path d="M925 378 l4 -24 h22 l4 24z" fill="#f7f3f0"/><g fill="#7fae8d"><ellipse cx="932" cy="340" rx="6" ry="14" transform="rotate(-20 932 340)"/><ellipse cx="948" cy="336" rx="6" ry="15" transform="rotate(20 948 336)"/><ellipse cx="940" cy="330" rx="5" ry="15"/></g><text class="label" x="935" y="300" text-anchor="end">Vườn cây</text></g>
+    <g id="d-vase"><rect x="340" y="350" width="14" height="28" rx="5" fill="#fff" opacity=".7"/><circle cx="345" cy="342" r="7" fill="#f0a6ad"/><circle cx="352" cy="338" r="6" fill="#f6c3c6"/></g>
+  </svg>
+  <svg class="room room-p" viewBox="0 0 600 1000" role="img" aria-label="Căn phòng (điện thoại)">
+    <rect width="600" height="680" fill="url(#wall)"/><rect width="600" height="680" fill="url(#wallLight)"/>
+    <rect width="600" height="26" fill="#f6e7df"/><rect class="glow" x="0" y="22" width="600" height="16" fill="#ffd9a0" filter="url(#blur8)" opacity=".9"/><rect class="glow" x="0" y="25" width="600" height="3" fill="#fff3d9"/>
+    <rect y="680" width="600" height="320" fill="url(#floor)"/><rect y="678" width="600" height="6" fill="#f2e6df"/>
+    <g opacity=".12" stroke="#7a5a48"><line x1="0" y1="760" x2="600" y2="760"/><line x1="0" y1="850" x2="600" y2="850"/><line x1="0" y1="950" x2="600" y2="950"/></g>
+    <use href="#o-window" transform="translate(0 30)" class="obj" tabindex="0" data-open="window" aria-label="window"/>
+    <use href="#o-calendar" transform="translate(10 0)" class="obj" tabindex="0" data-open="calendar" aria-label="calendar"/>
+    <use href="#o-moments" transform="translate(-402 0)" class="obj" tabindex="0" data-open="moments" aria-label="moments"/>
+    <use href="#o-lamp" transform="translate(-355 10)" class="obj" tabindex="0" data-open="lamp" aria-label="lamp"/>
+    <use href="#d-art" transform="translate(-30 -10)"/>
+    <use href="#o-shelf" transform="translate(-225 250)" class="obj" tabindex="0" data-open="shelf" aria-label="shelf"/>
+    <use href="#d-rug" transform="translate(-20 380)"/>
+    <use href="#d-desk" transform="translate(-276 300) scale(.9)"/><use href="#d-pc" transform="translate(-276 300) scale(.9)"/><use href="#o-fish" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="fish" aria-label="fish"/>
+    <use href="#o-laptop" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="laptop" aria-label="laptop"/><use href="#o-notes" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="notes" aria-label="notes"/><use href="#o-jar" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="jar" aria-label="jar"/><use href="#d-clock" transform="translate(-276 300) scale(.9)"/><use href="#o-music" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="music" aria-label="music"/><use href="#o-garden" transform="translate(-276 300) scale(.9)" class="obj" tabindex="0" data-open="garden" aria-label="garden"/><use href="#d-vase" transform="translate(-276 300) scale(.9)"/>
+    <use href="#d-chair" transform="translate(-40 380)"/>
   </svg>
   </div>
 </div>
