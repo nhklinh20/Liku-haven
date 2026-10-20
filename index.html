@@ -426,6 +426,23 @@ button.wide{width:100%;padding:10px}
 .ztheme button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:14px;background:linear-gradient(160deg,var(--w),#fff);border:2px solid transparent;font-size:12px}
 .ztheme button span{font-size:22px;color:var(--a)}
 .ztheme button[aria-pressed="true"]{border-color:var(--a)}
+/* profile + phone layout */
+.me{width:38px;height:38px;border-radius:50%;padding:0;overflow:hidden;display:grid;place-items:center;font-weight:700;color:var(--pink-d);background:var(--rose);border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.me img{width:100%;height:100%;object-fit:cover}
+.prof-top{display:flex;gap:16px;align-items:center;margin-bottom:12px}.prof-top .t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ava{width:84px;height:84px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--rose);font-size:30px;cursor:pointer;flex:none;border:3px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.ava img{width:100%;height:100%;object-fit:cover}
+.acc{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-bottom:12px}
+.acc button:disabled{opacity:.6}
+.swipe{display:none}@media (max-width:640px){.swipe{display:inline}}
+@media (hover:none){.label{opacity:0}}
+@media (max-width:640px){
+  h1{font-size:24px}
+  header .modes button{font-size:12px;padding:6px 10px}
+  .top-tools{margin-left:0}
+  .scene{overflow-x:auto;justify-content:flex-start;align-items:flex-start;-webkit-overflow-scrolling:touch;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+  .scene svg.room{width:auto;min-width:640px;height:min(64vh,420px);border-radius:0}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -437,10 +454,11 @@ button.wide{width:100%;padding:10px}
     <div class="modes" role="group" aria-label="Phong cách phòng"><button data-th="nu" aria-pressed="true">Phòng nữ</button><button data-th="nam" aria-pressed="false">Phòng nam</button><button data-th="custom" aria-pressed="false">Tùy biến…</button><button id="zodBtn">♈ Cung hoàng đạo</button></div>
     <div class="top-tools">
       <div class="modes" role="group" aria-label="Ngôn ngữ"><button data-lang="vi" aria-pressed="true">VI</button><button data-lang="en" aria-pressed="false">EN</button></div>
+      <button class="me" id="meBtn" aria-label="Hồ sơ"><span>👤</span></button>
       <button class="bell" id="ptsBtn" aria-label="Điểm thưởng">⭐ <span id="ptsVal">0</span></button>
       <button class="bell" id="bellBtn" aria-label="Thông báo">🔔 <span class="badge" id="bellBadge" hidden>0</span></button>
     </div>
-    <span class="hint">Chạm vào đồ vật trong phòng để mở ngăn của nó</span>
+    <span class="hint">Chạm vào đồ vật trong phòng để mở ngăn của nó<span class="swipe"> · vuốt ngang để xem cả phòng</span></span>
   </header>
   <div class="scene">
   <svg class="room" viewBox="0 0 1000 620" role="img" aria-label="Căn phòng học hiện đại tông hồng">
@@ -2083,6 +2101,45 @@ function renderLive(){
   <p class="note-sample">Khi có: xem chung hoặc gọi video cùng nhau cũng được cộng điểm.</p>`;
 }
 
+// ===== Hồ sơ cá nhân & tài khoản =====
+let prof={name:'',nick:'',gender:'',birth:'',partner:'',partnerBirth:'',bio:'',avatar:''};
+try{prof=Object.assign(prof,JSON.parse(localStorage.getItem('liku_profile'))||{})}catch(e){}
+function saveProf(){try{localStorage.setItem('liku_profile',JSON.stringify(prof))}catch(e){}}
+function updAvatar(){const b=$('#meBtn');if(!b)return;b.innerHTML=prof.avatar?`<img src="${prof.avatar}" alt="">`:`<span>${esc((prof.nick||prof.name||'👤').trim().charAt(0).toUpperCase()||'👤')}</span>`;b.setAttribute('aria-label','Hồ sơ của '+(prof.nick||prof.name||'bạn'))}
+views.profile={t:'Hồ sơ',r:renderProfile};
+function renderProfile(){
+  const z=ZODIAC[zodiacOf(prof.birth)],zp=ZODIAC[zodiacOf(prof.partnerBirth)];
+  body.innerHTML=`<div class="prof-top"><label class="ava" for="avIn" title="Đổi ảnh đại diện">${prof.avatar?`<img src="${prof.avatar}" alt="">`:'<span>📷</span>'}</label><input type="file" id="avIn" accept="image/*" hidden>
+    <div class="t"><b class="big">${esc(prof.nick||prof.name||'Chưa đặt tên')}</b><span class="meta">${z?`${z.s} ${z.n} · `:''}⭐ ${pts.total} điểm · ${levelOf(pts.total).L[2]} ${levelOf(pts.total).L[1]}</span></div></div>
+  <div class="infobox acc"><b>🔐 Tài khoản Liku</b><p>Đăng nhập bằng email, Google hoặc Apple để đồng bộ giữa iPhone, iPad, tablet và chia sẻ với người ấy. Dùng chung tài khoản với Liku Money.</p>
+    <button class="primary" id="loginBtn" disabled>Đăng nhập / Tạo tài khoản (sắp có)</button><span class="meta">Hiện hồ sơ và dữ liệu đang lưu trên máy này.</span></div>
+  <form class="mvf" id="pfF">
+    <label class="fld">Họ và tên<input id="pfName" value="${esc(prof.name)}" autocomplete="name"></label>
+    <label class="fld">Tên thân mật<input id="pfNick" value="${esc(prof.nick)}" placeholder="Linh"></label>
+    <label class="fld">Giới tính<select id="pfGender" class="sel"><option value="">Không muốn nói</option><option value="female" ${prof.gender==='female'?'selected':''}>Nữ</option><option value="male" ${prof.gender==='male'?'selected':''}>Nam</option><option value="other" ${prof.gender==='other'?'selected':''}>Khác</option></select></label>
+    <label class="fld">Ngày sinh<input type="date" id="pfBirth" value="${esc(prof.birth)}"></label>
+    <label class="fld">Tên người ấy<input id="pfPartner" value="${esc(prof.partner)}"></label>
+    <label class="fld">Ngày sinh người ấy<input type="date" id="pfPBirth" value="${esc(prof.partnerBirth)}"></label>
+    <label class="fld">Ngày bắt đầu yêu<input type="date" id="pfStart" value="${esc(cp.start||'')}"></label>
+    <label class="fld full">Giới thiệu ngắn<input id="pfBio" value="${esc(prof.bio)}" placeholder="Một câu về bạn…" maxlength="120"></label>
+    <div class="row2 full"><button class="primary" type="submit">Lưu hồ sơ</button></div></form>
+  ${z||zp?`<p class="note-sample">App tự nhận cung hoàng đạo từ ngày sinh: ${z?`bạn ${z.s} ${z.n}`:''}${z&&zp?', ':''}${zp?`người ấy ${zp.s} ${zp.n}`:''}.</p>`:''}
+  <h3 class="h3">Dữ liệu của bạn</h3>
+  <div class="tools"><button id="pfReset">Xoá toàn bộ dữ liệu trên máy này</button></div><div id="pfMsg"></div>`;
+  $('#avIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{prof.avatar=await shrinkUrlSq(f)}catch(x){}saveProf();updAvatar();renderProfile()};
+  $('#pfF').onsubmit=e=>{e.preventDefault();Object.assign(prof,{name:$('#pfName').value.trim(),nick:$('#pfNick').value.trim(),gender:$('#pfGender').value,birth:$('#pfBirth').value,partner:$('#pfPartner').value.trim(),partnerBirth:$('#pfPBirth').value,bio:$('#pfBio').value.trim()});saveProf();
+    if(prof.gender==='female'||prof.gender==='male')lovePrefs.recip=prof.gender;if(prof.birth)zod.me=zodiacOf(prof.birth);if(prof.partnerBirth)zod.you=zodiacOf(prof.partnerBirth);saveLove();saveZod();
+    const st=$('#pfStart').value;if(st!==cp.start){cp.start=st;saveCp()}updAvatar();renderProfile();body.insertAdjacentHTML('afterbegin','<p class="done">Đã lưu hồ sơ ✓</p>')};
+  $('#pfReset').onclick=()=>{$('#pfMsg').innerHTML='<div class="infobox"><b>Xoá hết dữ liệu?</b><p>Sách, phim, file, ghi chú, kỷ niệm, điểm và hồ sơ trên máy này sẽ mất và không khôi phục được.</p><div class="row2"><button id="pfNo">Giữ lại</button><button class="primary" id="pfYes">Xoá hết</button></div></div>';
+    $('#pfNo').onclick=()=>$('#pfMsg').innerHTML='';
+    $('#pfYes').onclick=async()=>{try{localStorage.clear()}catch(e){}for(const n of ['phonghoc','likucine','likufiles']){try{indexedDB.deleteDatabase(n)}catch(e){}}location.reload()}};
+}
+async function shrinkUrlSq(blob){const u=URL.createObjectURL(blob);try{const img=new Image();img.src=u;await img.decode();const S=256,k=Math.min(img.naturalWidth,img.naturalHeight);
+  const c=document.createElement('canvas');c.width=c.height=S;c.getContext('2d').drawImage(img,(img.naturalWidth-k)/2,(img.naturalHeight-k)/2,k,k,0,0,S,S);return c.toDataURL('image/jpeg',.85)}finally{URL.revokeObjectURL(u)}}
+$('#meBtn').onclick=()=>open('profile');updAvatar();
+// cuộn phòng về giữa trên điện thoại dọc
+(function(){const sc=document.querySelector('.scene');if(sc&&sc.scrollWidth>sc.clientWidth)sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)/2})();
+
 // ---- đồng hồ & lịch trong phòng chạy theo giờ thật ----
 function tickRoom(){const d=new Date();const c=$('#deskClock');if(c)c.textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
   const w=$('#wallCalTxt');if(w)w.textContent=(lang==='en'?['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()]:'THÁNG '+(d.getMonth()+1))+' · '+d.getFullYear()}
@@ -2113,7 +2170,7 @@ const EN={
  'Nhắc nhở':'Reminders','Hệ thống':'System','Gửi thử một thông báo':'Send a test notification','Thông báo thử':'Test notification',
  'Thông báo đang hoạt động bình thường.':'Notifications are working.','Pomodoro xong rồi!':'Pomodoro done!',
  'Nghỉ 5 phút nhé. Cây trong vườn vừa được tưới.':'Take a 5-minute break. Your plant was just watered.',
- 'Vừa xong':'Just now','♈ Cung hoàng đạo':'♈ Zodiac','Cung hoàng đạo':'Zodiac','Cung của mình':'My sign','Cung của người ấy':"Partner's sign",'Theme phòng theo cung':'Room themes by sign','🌳 Chặng đường':'🌳 Our journey','＋ Thêm kỷ niệm':'＋ Add a memory','Lưu kỷ niệm':'Save memory','Cây tình yêu':'Love tree','Ngày bắt đầu yêu nhau':'The day we started','💗 Hôm nay':'💗 Today','📖 Bí kíp':'📖 Tips','📚 Sách hay':'📚 Books','💞 Của hai đứa':'💞 Ours','💗 Mở thông điệp hôm nay':"💗 Open today's message",'🔀 Câu khác':'🔀 Another','💗 Thả tim':'💗 Send hearts','Bí kíp':'Tips','Việc nên làm cùng nhau':'Things to do together','Giai đoạn của hai bạn':'Your stage','♡ Vote':'♡ Vote','♥ Đã vote':'♥ Voted','Màn hình · Đa phương tiện':'Screen · Media hub','‹ Màn hình':'‹ Screen','Lướt web':'Web','Kho file':'Files','Góc cặp đôi':'Couple corner','Trò chơi':'Games','Gọi video & Live':'Video call & Live','Sắp có':'Coming soon','+ Tải file lên':'+ Upload files','Xem':'View','Đưa lên kệ sách':'Add to bookshelf','Đưa vào rạp':'Add to cinema','Mở':'Open','Lưu trang':'Save page','Trang đã lưu':'Saved pages','Việc muốn làm cùng nhau':'Things to do together','Hũ lời nhắn':'Love-note jar','💌 Rút một lời nhắn':'💌 Draw a note','Bỏ vào hũ':'Put in jar','Thêm':'Add','Caro 2 người':'Gomoku (2 players)','Lật thẻ ghép đôi':'Memory match','Ván mới':'New game','Chơi lại':'Play again','‹ Trò chơi':'‹ Games','Ảnh':'Photos','Âm thanh':'Audio','Tài liệu':'Documents','Khác':'Other','Lưu trữ':'Archive','Bỏ lưu trữ':'Unarchive','＋ Muốn xem':'＋ Want to watch','📅 Lên lịch xem chung':'📅 Schedule a watch party','✍️ Viết review':'✍️ Write review','Mới thêm':'New','Tạo sự kiện':'Create event','Thời gian':'Time','Mời ai':'Invite','Lời mời':'Message','Đăng sự kiện lên Khoảnh khắc':'Post event to Moments','Sự kiện sắp tới':'Upcoming events','Tham gia':'Join','🎟 Tham gia':'🎟 Join','✓ Đã tham gia':'✓ Going','Chưa có phim nào ở đây':'No movies here yet','Rạp phim · Video':'Cinema · Video','Rạp phim':'Cinema','‹ Rạp phim':'‹ Cinema','+ Thêm phim':'+ Add movie','🎲 Tối nay xem gì?':'🎲 What to watch tonight?','👥 Xem chung':'👥 Watch together','Muốn xem':'Want to watch','Đang xem dở':'Watching','Đã xem':'Watched','⭐ Review':'⭐ Review','📝 Ghi chú theo phút':'📝 Timestamped notes','Lưu review':'Save review','Sửa review':'Edit review','Cảm nhận của mình':'My thoughts','Câu thoại thích nhất':'Favourite line','✓ Đánh dấu đã xem':'✓ Mark as watched','Lưu phim':'Save movie','Tên phim':'Title','Nguồn':'Source','Thể loại':'Genre','Ảnh poster':'Poster image','Link YouTube':'YouTube link','Link video trực tiếp (.mp4, .webm)':'Direct video link (.mp4, .webm)','File phim trong máy':'Video file on this device','Chỉ lưu tên để review':'Save title only (for review)','▶ Xem ngay':'▶ Watch now','Tối nay xem:':'Tonight:','Mở trên YouTube':'Open on YouTube','☰ Mục lục':'☰ Contents','Mục lục':'Contents','✍️ Tóm tắt':'✍️ Summary','Tóm tắt sách':'Book summary','Đi tới':'Go','Lưu tóm tắt':'Save summary','Sửa tóm tắt':'Edit summary','Chia sẻ lên Khoảnh khắc':'Share to Moments','Tóm tắt, điều mình học được':'Summary, what I learned','Câu mình thích nhất':'Favourite quote','🎉 Bạn đã đọc xong cuốn này!':'🎉 You finished this book!','Điểm thưởng':'Rewards','Huy hiệu':'Badges','Cách nhận điểm':'How to earn points','Gần đây':'Recent','Cấp hiện tại':'Current level','Phần thưởng':'Rewards','Đang tải…':'Loading…','File này không có mục lục. Nhảy nhanh tới:':'This file has no contents. Jump to:','Đổi bìa':'Change cover','Bìa gốc':'Original cover','📖 Đọc':'📖 Read','✏️ Bút':'✏️ Pen','🖍 Highlight':'🖍 Highlight','🧽 Tẩy':'🧽 Eraser','📝 Ghi chú':'📝 Note','🗂 Ghi chú của tôi':'🗂 My notes','Ghi chú của tôi':'My notes','Lưu':'Save','Huỷ':'Cancel','Viết ghi chú…':'Write a note…','Chạm vào trang để dán ghi chú.':'Tap the page to add a note.','Chạm vào nét vẽ để xoá.':'Tap a stroke to erase it.','Đang ở chế độ viết. Chọn 📖 Đọc để lật trang.':'Writing mode. Choose 📖 Read to turn pages.','Bôi đen một đoạn chữ để highlight hoặc ghi chú.':'Select text to highlight or add a note.','Đóng':'Close','Dữ liệu mẫu để xem bố cục.':'Sample data to preview the layout.'
+ 'Vừa xong':'Just now','Hồ sơ':'Profile','Lưu hồ sơ':'Save profile','Họ và tên':'Full name','Tên thân mật':'Nickname','Giới tính':'Gender','Ngày sinh':'Birthday','Tên người ấy':"Partner's name",'Ngày sinh người ấy':"Partner's birthday",'Ngày bắt đầu yêu':'Anniversary date','Giới thiệu ngắn':'Short bio','Dữ liệu của bạn':'Your data','♈ Cung hoàng đạo':'♈ Zodiac','Cung hoàng đạo':'Zodiac','Cung của mình':'My sign','Cung của người ấy':"Partner's sign",'Theme phòng theo cung':'Room themes by sign','🌳 Chặng đường':'🌳 Our journey','＋ Thêm kỷ niệm':'＋ Add a memory','Lưu kỷ niệm':'Save memory','Cây tình yêu':'Love tree','Ngày bắt đầu yêu nhau':'The day we started','💗 Hôm nay':'💗 Today','📖 Bí kíp':'📖 Tips','📚 Sách hay':'📚 Books','💞 Của hai đứa':'💞 Ours','💗 Mở thông điệp hôm nay':"💗 Open today's message",'🔀 Câu khác':'🔀 Another','💗 Thả tim':'💗 Send hearts','Bí kíp':'Tips','Việc nên làm cùng nhau':'Things to do together','Giai đoạn của hai bạn':'Your stage','♡ Vote':'♡ Vote','♥ Đã vote':'♥ Voted','Màn hình · Đa phương tiện':'Screen · Media hub','‹ Màn hình':'‹ Screen','Lướt web':'Web','Kho file':'Files','Góc cặp đôi':'Couple corner','Trò chơi':'Games','Gọi video & Live':'Video call & Live','Sắp có':'Coming soon','+ Tải file lên':'+ Upload files','Xem':'View','Đưa lên kệ sách':'Add to bookshelf','Đưa vào rạp':'Add to cinema','Mở':'Open','Lưu trang':'Save page','Trang đã lưu':'Saved pages','Việc muốn làm cùng nhau':'Things to do together','Hũ lời nhắn':'Love-note jar','💌 Rút một lời nhắn':'💌 Draw a note','Bỏ vào hũ':'Put in jar','Thêm':'Add','Caro 2 người':'Gomoku (2 players)','Lật thẻ ghép đôi':'Memory match','Ván mới':'New game','Chơi lại':'Play again','‹ Trò chơi':'‹ Games','Ảnh':'Photos','Âm thanh':'Audio','Tài liệu':'Documents','Khác':'Other','Lưu trữ':'Archive','Bỏ lưu trữ':'Unarchive','＋ Muốn xem':'＋ Want to watch','📅 Lên lịch xem chung':'📅 Schedule a watch party','✍️ Viết review':'✍️ Write review','Mới thêm':'New','Tạo sự kiện':'Create event','Thời gian':'Time','Mời ai':'Invite','Lời mời':'Message','Đăng sự kiện lên Khoảnh khắc':'Post event to Moments','Sự kiện sắp tới':'Upcoming events','Tham gia':'Join','🎟 Tham gia':'🎟 Join','✓ Đã tham gia':'✓ Going','Chưa có phim nào ở đây':'No movies here yet','Rạp phim · Video':'Cinema · Video','Rạp phim':'Cinema','‹ Rạp phim':'‹ Cinema','+ Thêm phim':'+ Add movie','🎲 Tối nay xem gì?':'🎲 What to watch tonight?','👥 Xem chung':'👥 Watch together','Muốn xem':'Want to watch','Đang xem dở':'Watching','Đã xem':'Watched','⭐ Review':'⭐ Review','📝 Ghi chú theo phút':'📝 Timestamped notes','Lưu review':'Save review','Sửa review':'Edit review','Cảm nhận của mình':'My thoughts','Câu thoại thích nhất':'Favourite line','✓ Đánh dấu đã xem':'✓ Mark as watched','Lưu phim':'Save movie','Tên phim':'Title','Nguồn':'Source','Thể loại':'Genre','Ảnh poster':'Poster image','Link YouTube':'YouTube link','Link video trực tiếp (.mp4, .webm)':'Direct video link (.mp4, .webm)','File phim trong máy':'Video file on this device','Chỉ lưu tên để review':'Save title only (for review)','▶ Xem ngay':'▶ Watch now','Tối nay xem:':'Tonight:','Mở trên YouTube':'Open on YouTube','☰ Mục lục':'☰ Contents','Mục lục':'Contents','✍️ Tóm tắt':'✍️ Summary','Tóm tắt sách':'Book summary','Đi tới':'Go','Lưu tóm tắt':'Save summary','Sửa tóm tắt':'Edit summary','Chia sẻ lên Khoảnh khắc':'Share to Moments','Tóm tắt, điều mình học được':'Summary, what I learned','Câu mình thích nhất':'Favourite quote','🎉 Bạn đã đọc xong cuốn này!':'🎉 You finished this book!','Điểm thưởng':'Rewards','Huy hiệu':'Badges','Cách nhận điểm':'How to earn points','Gần đây':'Recent','Cấp hiện tại':'Current level','Phần thưởng':'Rewards','Đang tải…':'Loading…','File này không có mục lục. Nhảy nhanh tới:':'This file has no contents. Jump to:','Đổi bìa':'Change cover','Bìa gốc':'Original cover','📖 Đọc':'📖 Read','✏️ Bút':'✏️ Pen','🖍 Highlight':'🖍 Highlight','🧽 Tẩy':'🧽 Eraser','📝 Ghi chú':'📝 Note','🗂 Ghi chú của tôi':'🗂 My notes','Ghi chú của tôi':'My notes','Lưu':'Save','Huỷ':'Cancel','Viết ghi chú…':'Write a note…','Chạm vào trang để dán ghi chú.':'Tap the page to add a note.','Chạm vào nét vẽ để xoá.':'Tap a stroke to erase it.','Đang ở chế độ viết. Chọn 📖 Đọc để lật trang.':'Writing mode. Choose 📖 Read to turn pages.','Bôi đen một đoạn chữ để highlight hoặc ghi chú.':'Select text to highlight or add a note.','Đóng':'Close','Dữ liệu mẫu để xem bố cục.':'Sample data to preview the layout.'
 };
 const REV=Object.fromEntries(Object.entries(EN).map(([a,b])=>[b,a]));
 const RX=[[/^Đã đọc (\d+)%$/,'Read $1%',/^Read (\d+)%$/,'Đã đọc $1%'],[/^Trang (\d+) \/ (\d+)$/,'Page $1 / $2',/^Page (\d+) \/ (\d+)$/,'Trang $1 / $2'],
