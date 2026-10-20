@@ -26,9 +26,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);margin:0;overf
 .wrap{min-height:100%;display:flex;flex-direction:column;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;box-sizing:border-box;gap:10px}
 header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(22px,4vw,32px);margin:0;text-wrap:balance}
-.hint{color:var(--muted);font-size:13px}
+.hint{color:var(--muted);font-size:13px;flex-basis:100%;order:5}
 .scene{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
-svg.room{width:100%;max-width:1150px;height:auto;max-height:80vh;border-radius:18px;display:block;box-shadow:0 20px 50px rgba(120,70,60,.25)}
+svg.room{width:min(100%,1150px,calc(78vh * 1000 / 620));height:auto;border-radius:18px;display:block;box-shadow:0 20px 50px rgba(120,70,60,.25)}
 .obj{cursor:pointer;transition:filter .25s}
 .d3 .obj{filter:drop-shadow(0 3px 4px rgba(90,45,50,.28))}
 .obj:hover,.obj:focus-visible{filter:drop-shadow(0 0 8px rgba(255,255,255,.95)) drop-shadow(0 0 16px rgba(255,190,200,.9));outline:none}
@@ -537,7 +537,7 @@ button.wide{width:100%;padding:10px}
       <line x1="300" y1="62" x2="280" y2="82" stroke="#c9b3aa" stroke-width="1.5"/><line x1="300" y1="62" x2="320" y2="82" stroke="#c9b3aa" stroke-width="1.5"/><circle cx="300" cy="62" r="3" fill="#b89c90"/>
       <rect x="252" y="84" width="96" height="112" rx="4" fill="#fff" stroke="#ead6cf"/>
       <rect x="252" y="84" width="96" height="24" rx="4" fill="#e8a3a8"/>
-      <text x="300" y="101" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#fff">THÁNG 10 · 2026</text>
+      <text x="300" y="101" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#fff" id="wallCalTxt">THÁNG 10 · 2026</text>
       <g fill="#e6d3cc" id="calDots"></g>
       <circle cx="313" cy="156" r="7" fill="#c97a83"/>
       <text class="label" x="300" y="215" text-anchor="middle">Lịch nhắc nhở</text>
@@ -635,7 +635,7 @@ button.wide{width:100%;padding:10px}
 
     <!-- desk clock -->
     <rect x="770" y="350" width="36" height="28" rx="5" fill="#fff" stroke="#eadfdb"/>
-    <text x="788" y="369" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#c97a83">21:47</text>
+    <text x="788" y="369" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#c97a83" id="deskClock">21:47</text>
 
     <!-- headphones on stand -->
     <g class="obj" tabindex="0" data-open="music" aria-label="Tai nghe">
@@ -2083,6 +2083,10 @@ function renderLive(){
   <p class="note-sample">Khi có: xem chung hoặc gọi video cùng nhau cũng được cộng điểm.</p>`;
 }
 
+// ---- đồng hồ & lịch trong phòng chạy theo giờ thật ----
+function tickRoom(){const d=new Date();const c=$('#deskClock');if(c)c.textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const w=$('#wallCalTxt');if(w)w.textContent=(lang==='en'?['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][d.getMonth()]:'THÁNG '+(d.getMonth()+1))+' · '+d.getFullYear()}
+tickRoom();setInterval(tickRoom,20000);
 // ===== Ngôn ngữ =====
 const EN={
  'Phòng học của Linh':"Linh's Study Room",'Phòng Học Của Linh':"Linh's Study Room",'· chốn bình yên của Linh':"· Linh's peaceful place",
@@ -2124,7 +2128,7 @@ function trNode(root){
   while((n=w.nextNode())){if(n.nodeType===3){const p=n.parentNode;if(p&&(p.tagName==='SCRIPT'||p.tagName==='STYLE'))continue;doText(n)}else doEl(n)}
 }
 function setLang(l){lang=l;try{localStorage.setItem('liku_lang',l)}catch(e){}document.documentElement.lang=l;
-  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));trNode(document.body);document.title="Liku Haven"}
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));if(typeof tickRoom==='function')tickRoom();trNode(document.body);document.title="Liku Haven"}
 new MutationObserver(ms=>{if(lang==='vi')return;ms.forEach(m=>m.addedNodes.forEach(trNode))}).observe(document.body,{childList:true,subtree:true});
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 if(lang!=='vi')setLang(lang);

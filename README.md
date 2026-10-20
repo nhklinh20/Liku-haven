@@ -2,7 +2,7 @@
 
 **Liku Haven** là không gian riêng của bạn trong hệ sinh thái **Liku** (cùng nhà với Liku Money). Màn hình chính là một căn phòng xinh xắn: chạm vào đồ vật nào thì mở ngăn đó. Trong phòng có kệ sách, rạp phim, góc cặp đôi, trò chơi và nhiều thứ khác.
 
-👉 **Mở app:** https://nhklinh20.github.io/liku-haven/
+👉 **Mở app:** https://nhklinh20.github.io/Liku-haven/
 
 App chạy trên **Android, tablet Samsung, iPhone, iPad và máy tính**. Không cần tải từ chợ ứng dụng, chỉ cần thêm vào màn hình chính.
 
