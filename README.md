@@ -206,7 +206,7 @@ Bấm **⭐** ở thanh trên cùng để xem.
 - **Phòng nữ / Phòng nam:** hai bộ màu có sẵn.
 - **Tùy biến…:** chọn màu tường, điểm nhấn, ghế & rèm, ánh LED.
 - **♈ Cung hoàng đạo:** chọn cung của mình và người ấy để xem cách yêu, cách gắn kết theo nguyên tố (Lửa, Đất, Khí, Nước), và **12 theme phòng theo cung**. *(Chỉ để tham khảo cho vui.)*
-- **VI | EN:** đổi ngôn ngữ giao diện.
+- **Ngôn ngữ:** 6 ngôn ngữ chung của hệ sinh thái Liku: 🇻🇳 Tiếng Việt, 🇬🇧 English, 🇹🇭 ไทย, 🇨🇳 中文, 🇰🇷 한국어, 🇯🇵 日本語. Chọn ở ô ngôn ngữ trên cùng. Lựa chọn được lưu chung với Liku Money (cùng trang nhklinh20.github.io), nên đổi ở app này thì app kia cũng theo.
 
 ---
 
@@ -240,7 +240,7 @@ Bấm **⭐** ở thanh trên cùng để xem.
 - [x] Căn phòng 3D, theme nữ/nam/tùy biến/cung hoàng đạo
 - [x] Kệ sách PDF/EPUB/manga, viết, highlight, ghi chú, tóm tắt
 - [x] Màn hình đa phương tiện: rạp phim, web, kho file, góc cặp đôi, trò chơi
-- [x] Thông báo, điểm thưởng, huy hiệu, song ngữ
+- [x] Thông báo, điểm thưởng, huy hiệu, 6 ngôn ngữ chung với Liku Money
 - [ ] Đăng nhập tài khoản Liku (email, Google, Apple), dùng chung với Liku Money
 - [ ] Đồng bộ dữ liệu giữa các máy, sao lưu lên mây
 - [ ] Khoảnh khắc thật giữa hai người, bạn bè, cộng đồng (có báo cáo, chặn, kiểm duyệt)
@@ -266,6 +266,7 @@ icons/                 biểu tượng app
 
 - Thư viện đọc sách (pdf.js, JSZip, epub.js) được tải từ cdnjs **khi cần**, không chặn lúc mở app.
 - Dữ liệu lưu bằng IndexedDB và localStorage của trình duyệt.
+- Ngôn ngữ: bảng `I18N` (khoá tiếng Việt → [en, th, zh, ko, ja]), cùng thứ tự với `www/i18n.js` của Liku Money. Lựa chọn lưu ở `liku.lang` (và `sochitieu.lang` để Liku Money đọc được).
 - Mỗi lần cập nhật, tăng số phiên bản cache trong `sw.js` để máy người dùng nhận bản mới.
 - Chạy thử ở máy: `python3 -m http.server` trong thư mục repo rồi mở `http://localhost:8000`.
 
