@@ -480,6 +480,8 @@ button.wide{width:100%;padding:10px}
 .nt.social .ic{background:var(--social);color:#fff;border-radius:50%}
 .pf-g{margin:14px 0 2px;font-size:14px;color:var(--pink-d);letter-spacing:.02em;line-height:30px}
 .pf-paper .pf-g:first-child{margin-top:4px}
+.rot{margin-left:8px;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--rose);color:var(--pink-d);border-color:var(--pink)}
+@media (orientation:landscape) and (max-height:500px){header{gap:4px}h1{font-size:18px}header .modes button,.langsel{font-size:11px;padding:4px 8px}.hint{display:none}.scene svg.room{height:calc(100vh - 70px);min-width:0;width:auto}.scene{overflow:visible;margin-inline:0;justify-content:center}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -495,7 +497,7 @@ button.wide{width:100%;padding:10px}
       <button class="bell" id="ptsBtn" aria-label="Điểm thưởng">⭐ <span id="ptsVal">0</span></button>
       <button class="bell" id="bellBtn" aria-label="Thông báo">🔔 <span class="badge" id="bellBadge" hidden>0</span></button>
     </div>
-    <span class="hint">Chạm vào đồ vật trong phòng để mở ngăn của nó<span class="swipe"> · vuốt ngang để xem cả phòng</span></span>
+    <span class="hint">Chạm vào đồ vật trong phòng để mở ngăn của nó<span class="swipe"> · vuốt ngang để xem cả phòng</span><button class="rot" id="rotBtn" hidden>↻ Xoay ngang</button></span>
   </header>
   <div class="scene">
   <svg class="room" viewBox="0 0 1000 620" role="img" aria-label="Căn phòng học hiện đại tông hồng">
@@ -2242,6 +2244,12 @@ $('#meBtn').onclick=()=>open('profile');updAvatar();
 // cuộn phòng về giữa trên điện thoại dọc
 (function(){const sc=document.querySelector('.scene');if(sc&&sc.scrollWidth>sc.clientWidth)sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)/2})();
 
+// ---- xoay ngang: Android hỗ trợ khoá màn hình ngang, iPhone/iPad thì nhắc người dùng xoay máy ----
+(function(){const b=$('#rotBtn');if(!b)return;const portrait=()=>matchMedia('(orientation: portrait) and (max-width: 820px)').matches;
+  const canLock=!!(screen.orientation&&screen.orientation.lock)&&!/iPhone|iPad|iPod/.test(navigator.userAgent);
+  const upd=()=>{b.hidden=!portrait()};upd();addEventListener('resize',upd);
+  b.onclick=async()=>{if(canLock){try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();await screen.orientation.lock('landscape');return}catch(e){}}
+    b.textContent='📱 Hãy xoay ngang điện thoại (mở khoá xoay màn hình nếu đang khoá)';setTimeout(()=>{b.textContent='↻ Xoay ngang'},5000)}})();
 // ---- đồng hồ & lịch trong phòng chạy theo giờ thật ----
 function tickRoom(){const d=new Date();const c=$('#deskClock');if(c)c.textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
   const w=$('#wallCalTxt');if(w)w.textContent=(lang==='vi'?'THÁNG '+(d.getMonth()+1):d.toLocaleDateString({en:'en-US',th:'th-TH',zh:'zh-CN',ko:'ko-KR',ja:'ja-JP'}[lang],{month:'short'}).toUpperCase())+' · '+d.getFullYear()}
