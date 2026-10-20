@@ -478,6 +478,8 @@ button.wide{width:100%;padding:10px}
 .nt.social{border-left-color:var(--social);background:#fff}
 .nt.social.unread{background:var(--social-bg);border-color:#c9d1ff;border-left-color:var(--social)}
 .nt.social .ic{background:var(--social);color:#fff;border-radius:50%}
+.pf-g{margin:14px 0 2px;font-size:14px;color:var(--pink-d);letter-spacing:.02em;line-height:30px}
+.pf-paper .pf-g:first-child{margin-top:4px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -2165,6 +2167,19 @@ const PF=[
  ['movie','Bộ phim yêu thích','🎬','text','public',''],
  ['book','Cuốn sách yêu thích','📚','text','public',''],
  ['quote','Câu nói tâm đắc','💬','text','public',''],
+ ['height','Chiều cao','📏','text','partner','160 cm'],
+ ['weight','Cân nặng','⚖️','text','private','48 kg'],
+ ['measure','Số đo ba vòng','👗','text','private','82 - 62 - 88'],
+ ['shirt','Size áo','👕','text','partner','S / M / 38…'],
+ ['pants','Size quần / váy','👖','text','partner','S / 27…'],
+ ['shoe','Size giày','👟','text','partner','37'],
+ ['ring','Size nhẫn','💍','text','partner','Ni 10 / 50 mm'],
+ ['wrist','Size cổ tay (vòng, đồng hồ)','⌚','text','partner','15 cm'],
+ ['flower','Hoa yêu thích','💐','text','partner','Tulip hồng'],
+ ['scent','Mùi hương / nước hoa','🌷','text','partner',''],
+ ['brand','Thương hiệu yêu thích','🛍','text','partner',''],
+ ['allergy','Dị ứng / không thích','🚫','text','partner','Hải sản, đồ cay…'],
+ ['wish','Danh sách quà mơ ước','🎁','area','partner','Máy đọc sách, gấu bông to…'],
  ['loveLang','Ngôn ngữ tình yêu','💗','love','partner',''],
  ['dream','Ước mơ','✨','text','partner',''],
  ['fear','Điều mình sợ','🙈','text','private',''],
@@ -2173,6 +2188,7 @@ const PF=[
  ['start','Ngày bắt đầu yêu','💍','date','partner',''],
  ['bio','Đôi dòng về mình','📝','area','public','Vài dòng về mình…'],
 ];
+const PF_GROUPS=[['me','🌸 Về mình',['nick','name','gender','birth','zodiac','place','job','bio']],['fav','💖 Sở thích',['color','food','drink','hobby','song','movie','book','quote']],['size','🎁 Số đo & gợi ý quà',['height','weight','measure','shirt','pants','shoe','ring','wrist','flower','scent','brand','allergy','wish']],['heart','💭 Lòng mình',['loveLang','dream','fear']],['partner','💞 Người ấy',['partner','partnerBirth','start']]];
 const VIS={public:['🌍','Mọi người'],partner:['💞','Người ấy'],private:['🔒','Chỉ mình']};
 const LOVE_LANG=['Lời nói yêu thương','Thời gian chất lượng','Quà tặng','Hành động giúp đỡ','Cử chỉ chạm'];
 prof.f=prof.f||{};prof.vis=prof.vis||{};
@@ -2190,15 +2206,19 @@ function renderProfile(){
   <div class="tabs pf-tabs">${[['view','📖 Tự bạch'],['edit','✏️ Viết tự bạch'],['public','👀 Người khác thấy']].map(([k,l])=>`<button data-pm="${k}" aria-pressed="${k===pfMode}">${l}</button>`).join('')}</div>`;
   let main='';
   if(pfMode==='edit'){
-    main=`<form id="pfF" class="pf-paper edit">${PF.map(([k,l,i,t,dv,ph])=>{const v=esc(pfv(k));
+    const rowOf=(k)=>{const d=PF.find(x=>x[0]===k);return d?d:null};
+    main=`<form id="pfF" class="pf-paper edit">${PF_GROUPS.map(([g,gl,ks])=>`<h4 class="pf-g">${gl}</h4>${g==='size'?'<p class="note-sample">Để người ấy tặng quà đúng size. Mặc định chỉ người ấy (💞) hoặc chỉ mình (🔒) thấy.</p>':''}`+ks.map(rowOf).filter(Boolean).map(([k,l,i,t,dv,ph])=>{const v=esc(pfv(k));
       const inp=t==='date'?`<input type="date" data-pf="${k}" value="${v}">`:t==='area'?`<textarea data-pf="${k}" rows="3" placeholder="${esc(ph)}">${v}</textarea>`:
         t==='gender'?`<select data-pf="${k}"><option value="">Không muốn nói</option>${[['female','Nữ'],['male','Nam'],['other','Khác']].map(([a,b])=>`<option value="${a}" ${pfv(k)===a?'selected':''}>${b}</option>`).join('')}</select>`:
         t==='love'?`<select data-pf="${k}"><option value="">Chưa chọn</option>${LOVE_LANG.map(o=>`<option ${pfv(k)===o?'selected':''}>${o}</option>`).join('')}</select>`:`<input data-pf="${k}" value="${v}" placeholder="${esc(ph)}">`;
-      return `<div class="pf-row"><span class="pf-l">${i} ${l}</span>${inp}<div class="vis" role="group" aria-label="Ai được xem ${l}">${Object.entries(VIS).map(([vk,[vi,vn]])=>`<button type="button" data-vk="${k}" data-vv="${vk}" aria-pressed="${pvis(k)===vk}" title="${vn}">${vi}<small>${vn}</small></button>`).join('')}</div></div>`}).join('')}
+      return `<div class="pf-row"><span class="pf-l">${i} ${l}</span>${inp}<div class="vis" role="group" aria-label="Ai được xem ${l}">${Object.entries(VIS).map(([vk,[vi,vn]])=>`<button type="button" data-vk="${k}" data-vv="${vk}" aria-pressed="${pvis(k)===vk}" title="${vn}">${vi}<small>${vn}</small></button>`).join('')}</div></div>`}).join('')).join('')}
       <button class="primary wide" type="submit">💾 Lưu tự bạch</button></form>`;
   }else{
-    const only=pfMode==='public';const rows=PF.filter(([k])=>pfv(k)&&(!only||pvis(k)==='public'));
-    main=rows.length?`<div class="pf-paper">${rows.map(([k,l,i,t])=>`<div class="pf-line"><span class="pf-l">${i} ${l}</span><span class="pf-v">${esc(showVal(k,t))}</span>${only?'':`<span class="pf-vis" title="${VIS[pvis(k)][1]}">${VIS[pvis(k)][0]}</span>`}</div>`).join('')}</div>`
+    const only=pfMode==='public';const zz=ZODIAC[zodiacOf(pfv('birth'))];
+    const line=(k,l,i,v,vis)=>`<div class="pf-line"><span class="pf-l">${i} ${l}</span><span class="pf-v">${esc(v)}</span>${only?'':`<span class="pf-vis" title="${VIS[vis][1]}">${VIS[vis][0]}</span>`}</div>`;
+    let any=false;const html=PF_GROUPS.map(([g,gl,ks])=>{const rows=ks.map(k=>{if(k==='zodiac'){if(!zz||(only&&pvis('birth')!=='public'))return'';return line(k,'Cung hoàng đạo',zz.s,`${zz.n} · ${ELEM[zz.el]}`,pvis('birth'))}
+        const d=PF.find(x=>x[0]===k);if(!d||!pfv(k)||(only&&pvis(k)!=='public'))return'';return line(k,d[1],d[2],showVal(k,d[3]),pvis(k))}).join('');if(rows)any=true;return rows?`<h4 class="pf-g">${gl}</h4>${rows}`:''}).join('');
+    main=any?`<div class="pf-paper">${html}</div>`
       :`<div class="empty"><b>${only?'Chưa có gì công khai':'Tự bạch còn trống'}</b>${only?'Chọn 🌍 Mọi người ở những mục bạn muốn khoe nhé.':'Bấm "✏️ Viết tự bạch" để kể về mình nhé.'}</div>`;
     if(only)main=`<p class="note-sample">Đây là những gì bạn bè và cộng đồng sẽ thấy khi xem hồ sơ của bạn. Mục 💞 chỉ người ấy thấy, mục 🔒 chỉ mình bạn.</p>`+main;
   }
