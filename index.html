@@ -1121,7 +1121,7 @@ function showSummary(){
   $('#sumSave').onclick=()=>{const text=$('#sumText').value.trim(),quote=$('#sumQuote').value.trim();if(!text&&!rating){$('#sumText').focus();return}
     const first=!b.summary;b.summary={rating,text,quote,at:Date.now()};if(first)award(5,`Viết tóm tắt “${b.title}”`,'summaries');
     if($('#sumShare').checked){const c=$('#sumCircle').value;
-      posts.unshift({c,who:'Linh',t:`📚 Đọc xong “${b.title}” ${'★'.repeat(rating)}${'☆'.repeat(5-rating)}\n${text}${quote?`\n💬 “${quote}”`:''}`,time:'Vừa xong',img:b.cover||null,likes:0});
+      posts.unshift({c,who:'Liku',t:`📚 Đọc xong “${b.title}” ${'★'.repeat(rating)}${'☆'.repeat(5-rating)}\n${text}${quote?`\n💬 “${quote}”`:''}`,time:'Vừa xong',img:b.cover||null,likes:0});
       savePosts();if(!b.sharedAt){b.sharedAt=Date.now();award(2,'Chia sẻ một cuốn sách','shares')}}
     libPut(b);side.innerHTML='<div class="side-head"><b>Tóm tắt sách</b><button id="sideX" aria-label="Đóng">×</button></div><p class="done">Đã lưu tóm tắt'+($('#sumShare')&&$('#sumShare').checked?' và chia sẻ lên Khoảnh khắc':'')+'.</p><button id="sumEdit">Sửa tóm tắt</button>';
     $('#sideX').onclick=()=>side.hidden=true;$('#sumEdit').onclick=showSummary};
@@ -1144,7 +1144,7 @@ let circle='couple';
 const CIRCLES={couple:'Hai đứa',friends:'Bạn bè',public:'Cộng đồng'};
 let posts=[
   {c:'couple',who:'Người ấy',t:'Hôm nay đi ăn bánh tráng trộn ở Hồ Con Rùa, cười nhiều quá 😆',time:'2 giờ trước',img:'#f2bcc4',likes:1},
-  {c:'couple',who:'Linh',t:'Nhật ký 19/10: làm xong bản thiết kế phòng học cho app. Mai đi cà phê nhé.',time:'21:40',img:null,likes:1},
+  {c:'couple',who:'Liku',t:'Nhật ký 19/10: làm xong bản thiết kế phòng học cho app. Mai đi cà phê nhé.',time:'21:40',img:null,likes:1},
   {c:'friends',who:'Nhóm Python for DA',t:'Chốt slide final project rồi mọi người ơi!',time:'Hôm qua',img:'#c9d5e3',likes:4},
   {c:'public',who:'Góc học tập chung',t:'Thử thách 7 ngày Pomodoro: ai tham gia điểm danh nha.',time:'3 ngày trước',img:'#cfe6d9',likes:128},
 ];
@@ -1155,13 +1155,13 @@ function renderMoments(){
   <form class="add" id="pf"><input id="desc" placeholder="${circle==='couple'?'Viết nhật ký cho hai đứa…':'Chia sẻ khoảnh khắc…'}" required><label class="meta" style="display:flex;align-items:center;gap:6px">Ảnh <input type="file" id="ph" accept="image/*" style="max-width:180px"></label><button type="submit">Đăng</button></form>
   ${eventsStrip(circle)}<div class="rows">${list.map((p,i)=>`<article class="row" style="flex-direction:column;align-items:stretch;gap:8px"><div style="display:flex;gap:10px;align-items:center"><span class="ic" style="background:var(--rose);color:var(--pink-d);border-radius:50%">${p.who[0]}</span><span class="t"><b>${p.who}</b><span class="meta">${p.time} · ${CIRCLES[p.c]}</span></span></div>
     <div>${p.t}</div>${p.img?(p.img[0]==='#'?`<div style="height:140px;border-radius:10px;background:${p.img}"></div>`:`<img src="${p.img}" alt="" style="border-radius:10px;max-height:260px;object-fit:cover">`):''}
-    ${p.event?(()=>{const e=events.find(x=>x.id===p.event);return e?`<div><button data-join="${e.id}" class="${e.going.includes('Linh')?'primary':''}">${e.going.includes('Linh')?'✓ Đã tham gia':'🎟 Tham gia'} · ${e.going.length}</button></div>`:''})():''}
+    ${p.event?(()=>{const e=events.find(x=>x.id===p.event);return e?`<div><button data-join="${e.id}" class="${e.going.includes('Liku')?'primary':''}">${e.going.includes('Liku')?'✓ Đã tham gia':'🎟 Tham gia'} · ${e.going.length}</button></div>`:''})():''}
     <div><button data-like="${posts.indexOf(p)}">♡ Thương · ${p.likes}</button></div></article>`).join('')||'<p class="note-sample">Chưa có bài nào.</p>'}</div>
   <p class="note-sample" style="margin-top:12px">Bài mẫu. Ở bản thật, mỗi bài chọn ai được xem: chỉ hai đứa, bạn bè, hay công khai.</p>`;
   body.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{circle=b.dataset.c;renderMoments()});
-  body.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>{const e=events.find(x=>x.id===b.dataset.join);if(!e)return;const k=e.going.indexOf('Linh');if(k>=0)e.going.splice(k,1);else e.going.push('Linh');saveEvents();renderMoments()});
+  body.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>{const e=events.find(x=>x.id===b.dataset.join);if(!e)return;const k=e.going.indexOf('Liku');if(k>=0)e.going.splice(k,1);else e.going.push('Liku');saveEvents();renderMoments()});
   body.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{posts[b.dataset.like].likes++;renderMoments()});
-  $('#pf').onsubmit=e=>{e.preventDefault();const t=$('#desc').value,f=$('#ph').files[0];const add=img=>{posts.unshift({c:circle,who:'Linh',t,time:'Vừa xong',img,likes:0});savePosts();renderMoments()};if(f){const r=new FileReader();r.onload=()=>add(r.result);r.readAsDataURL(f)}else add(null)};
+  $('#pf').onsubmit=e=>{e.preventDefault();const t=$('#desc').value,f=$('#ph').files[0];const add=img=>{posts.unshift({c:circle,who:'Liku',t,time:'Vừa xong',img,likes:0});savePosts();renderMoments()};if(f){const r=new FileReader();r.onload=()=>add(r.result);r.readAsDataURL(f)}else add(null)};
 }
 let curTheme='nu';
 // ===== Cung hoàng đạo: gợi ý gắn kết + theme phòng =====
@@ -1249,7 +1249,7 @@ let notifs=[],nprefs={reminder:true,pomodoro:true,moments:true,system:true,devic
 try{notifs=JSON.parse(localStorage.getItem('liku_notifs'))||[];nprefs=Object.assign(nprefs,JSON.parse(localStorage.getItem('liku_nprefs'))||{})}catch(e){}
 if(!notifs.length){const now=Date.now();notifs=[
   {id:'s1',type:'moments',title:'Người ấy đã chia sẻ một khoảnh khắc với bạn',body:'"Hôm nay đi ăn bánh tráng trộn…" (thông báo mẫu)',at:now-2*36e5,read:false,open:'moments'},
-  {id:'s2',type:'system',title:'Chào mừng tới Phòng học của Linh',body:'Thông báo về nhắc nhở, Pomodoro và khoảnh khắc sẽ hiện ở đây.',at:now-5*36e5,read:true}]}
+  {id:'s2',type:'system',title:'Chào mừng tới Liku Haven',body:'Thông báo về nhắc nhở, Pomodoro và khoảnh khắc sẽ hiện ở đây.',at:now-5*36e5,read:true}]}
 function saveN(){try{localStorage.setItem('liku_notifs',JSON.stringify(notifs.slice(0,100)));localStorage.setItem('liku_nprefs',JSON.stringify(nprefs))}catch(e){}}
 function updBadge(){const u=notifs.filter(n=>!n.read).length,b=$('#bellBadge');b.hidden=!u;b.textContent=u>9?'9+':u}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<1)return 'Vừa xong';if(m<60)return m+' phút trước';const h=Math.round(m/60);if(h<24)return h+' giờ trước';return Math.round(h/24)+' ngày trước'}
@@ -1340,8 +1340,9 @@ function renderRewards(){
 }
 $('#ptsBtn').onclick=()=>open('rewards');updPts();
 // lưu bài Khoảnh khắc
-function savePosts(){try{localStorage.setItem('liku_posts',JSON.stringify(posts.filter(p=>p.who==='Linh').slice(0,40)))}catch(e){}}
+function savePosts(){try{localStorage.setItem('liku_posts',JSON.stringify(posts.filter(p=>p.who==='Liku').slice(0,40)))}catch(e){}}
 try{const mine=JSON.parse(localStorage.getItem('liku_posts'));if(Array.isArray(mine))posts=[...mine,...posts]}catch(e){}
+const OLD_ME='Li'+'nh';posts.forEach(p=>{if(p.who===OLD_ME)p.who='Liku'});try{events.forEach(e=>{e.going=e.going.map(x=>x===OLD_ME?'Liku':x);if(e.host===OLD_ME)e.host='Liku'})}catch(e){}
 
 // ===== Rạp phim (màn hình máy tính) =====
 const CDB={db:null,
@@ -1421,16 +1422,16 @@ function eventForm(m){
     <div class="row2 full"><button type="button" id="evX">Huỷ</button><button class="primary" type="submit">Tạo sự kiện</button></div></form>`;
   $('#evX').onclick=()=>$('#mvBox').innerHTML='';
   $('#evF').onsubmit=async e=>{e.preventDefault();const at=new Date($('#evAt').value).getTime();if(!at||at<Date.now()-6e4){$('#evAt').focus();return}
-    const ev={id:'ev'+Date.now().toString(36),movieId:m.id,title:m.title,poster:m.poster||null,at,c:$('#evC').value,msg:$('#evMsg').value.trim(),going:['Linh'],host:'Linh'};
+    const ev={id:'ev'+Date.now().toString(36),movieId:m.id,title:m.title,poster:m.poster||null,at,c:$('#evC').value,msg:$('#evMsg').value.trim(),going:['Liku'],host:'Liku'};
     events.unshift(ev);saveEvents();m.event=ev.id;await mvPut(m);
-    if($('#evPost').checked){posts.unshift({c:ev.c,who:'Linh',t:`📅 Sự kiện xem chung: “${m.title}”\n🕗 ${fmtWhen(at)}${ev.msg?'\n'+ev.msg:''}`,time:'Vừa xong',img:m.poster||null,likes:0,event:ev.id});savePosts()}
+    if($('#evPost').checked){posts.unshift({c:ev.c,who:'Liku',t:`📅 Sự kiện xem chung: “${m.title}”\n🕗 ${fmtWhen(at)}${ev.msg?'\n'+ev.msg:''}`,time:'Vừa xong',img:m.poster||null,likes:0,event:ev.id});savePosts()}
     notify('system','Đã tạo sự kiện xem chung',`“${m.title}” lúc ${fmtWhen(at)}. App sẽ nhắc bạn khi tới giờ.`,'moments');renderCinema('want')};
 }
 function checkEvents(){const now=Date.now();let ch=false;events.forEach(e=>{if(!e.soon&&e.at-now<=15*6e4&&e.at>now){e.soon=true;ch=true;notify('reminder',`15 phút nữa xem chung “${e.title}”`,fmtWhen(e.at),'laptop')}
   if(!e.started&&now>=e.at&&now-e.at<3*36e5){e.started=true;ch=true;notify('reminder',`Đến giờ xem chung “${e.title}”`,'Mở rạp phim để bắt đầu nhé.','laptop')}});if(ch)saveEvents()}
 setInterval(checkEvents,20000);setTimeout(checkEvents,2000);
 function eventsStrip(c){const up=events.filter(e=>e.c===c&&e.at>Date.now()-3*36e5).sort((a,b)=>a.at-b.at);if(!up.length)return'';
-  return `<div class="evs"><b>Sự kiện sắp tới</b>${up.map(e=>{const me=e.going.includes('Linh');return `<div class="ev-i"><span class="ev-ic">🎬</span><span class="t"><b>${esc(e.title)}</b><span class="meta">🕗 ${fmtWhen(e.at)} · ${e.going.length} người tham gia</span></span><button data-join="${e.id}" class="${me?'primary':''}">${me?'✓ Đã tham gia':'Tham gia'}</button></div>`}).join('')}</div>`}
+  return `<div class="evs"><b>Sự kiện sắp tới</b>${up.map(e=>{const me=e.going.includes('Liku');return `<div class="ev-i"><span class="ev-ic">🎬</span><span class="t"><b>${esc(e.title)}</b><span class="meta">🕗 ${fmtWhen(e.at)} · ${e.going.length} người tham gia</span></span><button data-join="${e.id}" class="${me?'primary':''}">${me?'✓ Đã tham gia':'Tham gia'}</button></div>`}).join('')}</div>`}
 function movieForm(){
   $('#mvBox').innerHTML=`<form class="mvf" id="mvF">
     <label class="fld">Tên phim<input id="mvTitle" required placeholder="Ví dụ: Bài giảng Kinh tế lượng buổi 3"></label>
@@ -1530,7 +1531,7 @@ function renderCnSide(tab){
     $('#rvSave').onclick=()=>{const text=$('#rvText').value.trim(),quote=$('#rvQuote').value.trim();if(!text&&!rating){$('#rvText').focus();return}
       const first=!m.review;m.review={rating,text,quote,at:Date.now()};if(first)award(5,`Viết review “${m.title}”`,'reviews');
       const share=$('#rvShare').checked;
-      if(share){posts.unshift({c:$('#rvCircle').value,who:'Linh',t:`🎬 Đã xem “${m.title}” ${'★'.repeat(rating)}${'☆'.repeat(5-rating)}\n${text}${quote?`\n💬 “${quote}”`:''}`,time:'Vừa xong',img:m.poster||null,likes:0});savePosts();
+      if(share){posts.unshift({c:$('#rvCircle').value,who:'Liku',t:`🎬 Đã xem “${m.title}” ${'★'.repeat(rating)}${'☆'.repeat(5-rating)}\n${text}${quote?`\n💬 “${quote}”`:''}`,time:'Vừa xong',img:m.poster||null,likes:0});savePosts();
         if(!m.sharedAt){m.sharedAt=Date.now();award(2,'Chia sẻ một bộ phim','shares')}}
       mvPut(m);cb.innerHTML=`<p class="done">Đã lưu review${share?' và chia sẻ lên Khoảnh khắc':''}.</p><button id="rvEdit">Sửa review</button>`;$('#rvEdit').onclick=()=>renderCnSide('review')};
   }
@@ -2133,7 +2134,7 @@ views.profile={t:'Hồ sơ',r:renderProfile};
 const LIKU_AVA='data:image/png;base64,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';
 // ---- Tự bạch: mỗi mục chọn ai được xem ----
 const PF=[
- ['nick','Tên thân mật','🌸','text','public','Linh'],
+ ['nick','Tên thân mật','🌸','text','public','Liku'],
  ['name','Họ và tên','🪪','text','partner',''],
  ['gender','Giới tính','⚧','gender','partner',''],
  ['birth','Sinh nhật','🎂','date','public',''],
@@ -2210,7 +2211,7 @@ function tickRoom(){const d=new Date();const c=$('#deskClock');if(c)c.textConten
 tickRoom();setInterval(tickRoom,20000);
 // ===== Ngôn ngữ =====
 const EN={
- 'Phòng học của Linh':"Linh's Study Room",'Phòng Học Của Linh':"Linh's Study Room",'· chốn bình yên của Linh':"· Linh's peaceful place",
+ 'Phòng học của Liku':"Liku's Study Room",'Phòng Học Của Liku':"Liku's Study Room",'· chốn bình yên của Liku':"· Liku's peaceful place",
  'Chạm vào đồ vật trong phòng để mở ngăn của nó':'Tap an object in the room to open it',
  'Phòng nữ':'Pink room','Phòng nam':'Blue room','Tùy biến…':'Custom…','Thông báo':'Notifications','Ngôn ngữ':'Language',
  'Cửa sổ · thời tiết':'Window · Weather','Lịch nhắc nhở':'Reminders','Khoảnh khắc':'Moments','Thư viện · PDF · EPUB · Manga':'Library · PDF · EPUB · Manga',

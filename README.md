@@ -271,4 +271,4 @@ icons/                 biểu tượng app
 
 ---
 
-Made with 💗 by Linh · Liku
+Made with 💗 by Liku
