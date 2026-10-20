@@ -1,5 +1,5 @@
 // Liku Haven: lưu sẵn app để mở nhanh và dùng được khi mất mạng
-const V='liku-haven-v8';
+const V='liku-haven-v9';
 const SHELL=['./','index.html','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png'];
 const CACHE_HOSTS=['cdnjs.cloudflare.com','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)));self.skipWaiting()});
